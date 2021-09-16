@@ -1,16 +1,6 @@
-## Passo a passo
+# Paint grid
 
-1. Ver que cor foi selecionada
-1. Pintar o quadrado de cima com a cor selecionada
-1. Identifica pontos coloridas
-1. Identificar coordenadas do clique
-1. Checa se é dentro ou fora dos limites
-1. Encontra em qual quadrado foi (limites)
-1. Pinta o quadrado (dois loops)
+Grid wich can be printed with different colors.
+Just clink on top-left scale to choose a color, and then on a square wich will be colored.
 
-## Distorção
-1. Encontrar funcao da ID pra II
-1. Converter clique da ID pra II
-1. Identificar em qual quadrado foi o clique
-1. Encontrar os limites do Quadrado na ID
-1. Pintar o quadrado
+![demo](demo.png]
