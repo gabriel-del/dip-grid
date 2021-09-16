@@ -13,16 +13,16 @@ currentPoint = -1 # indicate wich point is selected
 calibrating = True
 fullScreen = False 
 
-inputimage1 = cv2.imread("grid.png") # le a imagem do grid
-scale = cv2.imread("scale.png") # le a imagem da escala de cor
-rows1, cols1 = inputimage1.shape[:2] # le as dimensoes do grid
-pts1 = np.float32([[0,0],[cols1,0],[cols1,rows1],[0,rows1]]) #cria os pontos de controle para a imagem do grid
-image = np.zeros((height, width, 3), np.uint8) #cria uma imagem colorida para a tela
+inputimage1 = cv2.imread("grid.png")
+scale = cv2.imread("scale.png")
+rows1, cols1 = inputimage1.shape[:2] # read dimensions of drid
+pts1 = np.float32([[0,0],[cols1,0],[cols1,rows1],[0,rows1]]) # create points
+image = np.zeros((height, width, 3), np.uint8) # create colorful image on screen
 
 rgbcolor = (255,255,255)
 selectedcolor = np.zeros((50, 50, 3), np.uint8) #cria uma imagem 50x50 para armazenar a cor selecionada
 
-#funcao que retorna a cor de um corner especifico para a calibracao
+# color of dots
 def pointColor(n):
 	if n == 0:
 		return (0,0,255)
@@ -33,18 +33,17 @@ def pointColor(n):
 	else:
 		return (0,255,0)
 
-#esta funcao eh chamada sempre que um evento de mouse acontece (clicar, arrastar, soltar, etc)
+# mouse events
 def mouse(event, x, y, flags, param):
 	if(not calibrating):
 		return
 	global currentPoint
-	
 	if event == cv2.EVENT_LBUTTONDOWN:
 		if(x < 50 and y < 50):
 			selectedcolor[:] = scale[y, x]
 
 		cp = 0
-		#descobre em qual dos 4 pontos o usuario clicou (precisa estar a uma distancia maxima de 4 pixels para ser considerado o clique)
+        #discover which point you clicked (max distance: 4 pixels)
 		for point in referencePoints:
 			dist = math.sqrt((x-point[0])*(x-point[0])+(y-point[1])*(y-point[1]))
 			if dist < 4:
@@ -53,7 +52,7 @@ def mouse(event, x, y, flags, param):
 			else:
 				cp = cp + 1
 
-	if event == cv2.EVENT_LBUTTONUP: #quando o clique é solto, diz o que o ponto selecionado eh -1
+	if event == cv2.EVENT_LBUTTONUP: #when click is loose, tell it is -1
 		pt = M2 @ (x, y, 1)
 		pt = (pt/pt[2])
 		if (pt[0] >= 0 and pt[0] < 490 and pt[1] >= 0 and pt[1] < 490):
@@ -63,48 +62,46 @@ def mouse(event, x, y, flags, param):
 			cv2.rectangle(inputimage1, (xx*70, yy*70), (xx*70+70, yy*70+70), (int(selectedcolor[0,0][0]),int(selectedcolor[0,0][1]),int(selectedcolor[0,0][2])), -1)
 
 		currentPoint = -1
-		
-	if currentPoint != -1: #move as coordenadas do ponto selecionado para a posicao lida do mouse
+	if currentPoint != -1: #move the coordinates
 		referencePoints[currentPoint] = [x,y]
 
-#cria a janela principal da aplicacao
+# main window
 cv2.namedWindow("test", cv2.WINDOW_NORMAL)
-#associa uma funcao de eventos do mouse a janela principal criada
+#associate mouse events to main windo
 cv2.setMouseCallback("test", mouse)
 
-#diz que a cor selecionada inicialmente eh branco
+#it tels if select color is white
 selectedcolor[:] = (255,255,255)
 
-#loop principal
+# main loop
 while True:
-	image[:] = (0,0,0) #limpa a imagem (pinta toda ela de preto)
-	image[0:50,0:50] = scale #desenha a escala de cores no canto superior esquerdo
-	image[0:50,width-50:width] = selectedcolor #desenha a imagem com a cor selecionada no canto superior direito
-	
-	if calibrating: #se estiver com o modo de calibracao ativado, pinta os pontos coloridos em cada corner do grid
+	image[:] = (0,0,0) # clean image to black
+	image[0:50,0:50] = scale
+	image[0:50,width-50:width] = selectedcolor
+	if calibrating: # change colored dots
 		color = 0
 		for point in referencePoints:
 			cv2.circle(image, (int(point[0]), int(point[1])),5,pointColor(color), -1)
 			color = color + 1
 
-	M = cv2.getPerspectiveTransform(pts1,referencePoints) # calcula a projecao com base nas coordenadas dos 4 corners
-	M2 = cv2.getPerspectiveTransform(referencePoints, pts1) # calcula a projecao com base nas coordenadas dos 4 corners	
-	cv2.warpPerspective(inputimage1, M, (width,height), image, borderMode=cv2.BORDER_TRANSPARENT) # usa esta funcao para projetar o grid distorcido na imagem
+	M = cv2.getPerspectiveTransform(pts1,referencePoints) # calculate projection
+	M2 = cv2.getPerspectiveTransform(referencePoints, pts1)
+	cv2.warpPerspective(inputimage1, M, (width,height), image, borderMode=cv2.BORDER_TRANSPARENT) # project
 
-	cv2.imshow("test", image) #exibe a imagem na tela
-	key = cv2.waitKey(1) & 0xFF #espera 1ms e verifica se alguma tecla foi pressionada
+	cv2.imshow("test", image)
+	key = cv2.waitKey(1) & 0xFF
 
-	if key == ord("c"): #caso a tecla 'c' tenha sido pressionada, habilita ou desabilita o modo de calibracao
+	if key == ord("c"):
 		calibrating = not calibrating
 
-	if key == ord("f"): #caso a tecla 'f' tenha sido pressionada, habilita ou desabilita o modo de tela cheia
+	if key == ord("f"):
 		if fullScreen == False:
 			cv2.setWindowProperty("test", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 		else:
 			cv2.setWindowProperty("test", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
 		fullScreen = not fullScreen
 
-	if key == ord("q"): #caso a tecla 'q' tenha sido pressionada, fecha a aplicacao
+	if key == ord("q"):
 		break
 
 cv2.destroyAllWindows()
