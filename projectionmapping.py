@@ -15,7 +15,7 @@ calibrating = True #indica se o modo de calibracao estah ativado
 fullScreen = False #indica se o modo de tela cheia estah ativado
 
 # inputimage1 = cv2.imread("grid.png") # le a imagem do grid
-inputimage1 = cv2.imread("self2.jpeg") # le a imagem do grid
+inputimage1 = cv2.imread("picole2.jpeg") # le a imagem do grid
 scale = cv2.imread("scale2.png") # le a imagem da escala de cor
 rows1, cols1 = inputimage1.shape[:2] # le as dimensoes do grid
 pts1 = np.float32([[0,0],[cols1,0],[cols1,rows1],[0,rows1]]) #cria os pontos de controle para a imagem do grid
@@ -59,7 +59,7 @@ def mouse(event, x, y, flags, param):
 		pt = M2 @ (x, y, 1)
 		pt = (pt/pt[2])
 		if (pt[0] >= 0 and pt[0] < 490 and pt[1] >= 0 and pt[1] < 490):
-			print(int(pt[0]/70), " ", int(pt[1]/70))
+			#print(int(pt[0]/70), " ", int(pt[1]/70))
 			xx = int(pt[0]/70)
 			yy = int(pt[1]/70)
 			cv2.rectangle(inputimage1, (xx*70, yy*70), (xx*70+70, yy*70+70), (int(selectedcolor[0,0][0]),int(selectedcolor[0,0][1]),int(selectedcolor[0,0][2])), -1)
