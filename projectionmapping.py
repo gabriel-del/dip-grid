@@ -6,17 +6,15 @@ height = 480
 
 M2 = 0
 
-#quatro pontos iniciais dos corners do grid
+# 4 reference points
 referencePoints = np.float32([[width/4,height/4],[3*width/4,height/4],[3*width/4,3*height/4],[width/4,3*height/4]])
-#referencePoints = np.float32([[150,150],[250,150],[250,250],[150,250]])
 
-currentPoint = -1 #indica qual dos 4 pontos atuais estah selecionado
-calibrating = True #indica se o modo de calibracao estah ativado
-fullScreen = False #indica se o modo de tela cheia estah ativado
+currentPoint = -1 # indicate wich point is selected
+calibrating = True
+fullScreen = False 
 
-# inputimage1 = cv2.imread("grid.png") # le a imagem do grid
-inputimage1 = cv2.imread("picole2.jpeg") # le a imagem do grid
-scale = cv2.imread("scale2.png") # le a imagem da escala de cor
+inputimage1 = cv2.imread("grid.png") # le a imagem do grid
+scale = cv2.imread("scale.png") # le a imagem da escala de cor
 rows1, cols1 = inputimage1.shape[:2] # le as dimensoes do grid
 pts1 = np.float32([[0,0],[cols1,0],[cols1,rows1],[0,rows1]]) #cria os pontos de controle para a imagem do grid
 image = np.zeros((height, width, 3), np.uint8) #cria uma imagem colorida para a tela
